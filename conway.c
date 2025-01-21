@@ -1,10 +1,9 @@
 #include <stdio.h>
-#include <stdbool.h>
+#include <unistd.h>
+#include <stdlib.h>
 
 #define WIDTH 50
 #define HEIGHT 20
-
-Cell grid[HEIGHT][WIDTH];
 
 typedef enum {
     DEAD,
@@ -15,6 +14,8 @@ typedef struct {
     char symbol;
     CellState state;
 } Cell;
+
+Cell grid[HEIGHT][WIDTH];
 
 void initGrid(Cell grid[HEIGHT][WIDTH]) {
     for (int y = 0; y < HEIGHT; y++) {
@@ -35,25 +36,24 @@ void printGrid(Cell grid[HEIGHT][WIDTH]) {
 }
 
 Cell updateCell(Cell cell, int y, int x) {
-    int ymax = y + 3;
-    int xmax = x + 3;
     int countCellsAlive = 0;
-    for (y - 1; y < ymax; y++) {
-        for (x - 1; x < xmax; x++) {
-            if (grid[y][x].state == ALIVE) {
+    for (int i = -1; i <= 1; i++) {
+        for (int j = -1; j <= 1; j++) {
+            if (i == 0 && j == 0) continue;
+            int ny = y + i;
+            int nx = x + j;
+            if (ny >= 0 && ny < HEIGHT && nx >= 0 && nx < WIDTH && grid[ny][nx].state == ALIVE) {
                 countCellsAlive++;
             }
         }
     }
-    if (cell.state == ALIVE && countCellsAlive >= 2 && countCellsAlive > 3) {
+    if (cell.state == ALIVE && (countCellsAlive < 2 || countCellsAlive > 3)) {
         cell.state = DEAD;
         cell.symbol = '-';
-        return cell;
     }
     else if (cell.state == DEAD && countCellsAlive == 3) {
         cell.state = ALIVE;
         cell.symbol = '$';
-        return cell;
     }
     return cell;
 }
@@ -67,16 +67,38 @@ void updateGrid(Cell grid[HEIGHT][WIDTH]) {
     }
 }
 
-
 int main() {
 
     initGrid(grid);
 
-    Cell test;
-    test.state = DEAD;
+    grid[1][2].state = ALIVE; grid[1][2].symbol = '$';
+    grid[2][3].state = ALIVE; grid[2][3].symbol = '$';
+    grid[3][1].state = ALIVE; grid[3][1].symbol = '$';
+    grid[3][2].state = ALIVE; grid[3][2].symbol = '$';
+    grid[3][3].state = ALIVE; grid[3][3].symbol = '$';
 
-    grid[HEIGHT / 2][WIDTH / 2].symbol = '$';
-    printGrid(grid);
+    grid[10][10].state = ALIVE; grid[10][10].symbol = '$';
+    grid[10][11].state = ALIVE; grid[10][11].symbol = '$';
+    grid[11][10].state = ALIVE; grid[11][10].symbol = '$';
+    grid[11][11].state = ALIVE; grid[11][11].symbol = '$';
+
+    for (int i = 0; i < HEIGHT; i++) {
+        for (int j = 0; j < WIDTH; j++) {
+            if (rand() % 5 == 0) {
+                grid[i][j].state = ALIVE;
+                grid[i][j].symbol = '$';
+            }
+        }
+    }
+
+
+    while (1) {
+        printf("==================================================");
+        printGrid(grid);
+        updateGrid(grid);
+
+        sleep(1);
+    }
 
     return 0;
 }
