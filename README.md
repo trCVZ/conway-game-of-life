@@ -9,11 +9,11 @@ This project implements Conway's Game of Life, a simulation based on cells that 
 1. Copy the source code into a file named `game_of_life.c`.
 2. Compile the program with the command:
     ```bash
-    gcc -o game_of_life game_of_life.c
+    gcc .\conway.c
     ```
 3. Run the program:
     ```bash
-    ./game_of_life
+    .\a.exe
     ```
 
 ## Usage

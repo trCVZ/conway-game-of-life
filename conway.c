@@ -27,6 +27,7 @@ void initGrid(Cell grid[HEIGHT][WIDTH]) {
 }
 
 void printGrid(Cell grid[HEIGHT][WIDTH]) {
+    printf("\033[H\033[J");
     for (int y = 0; y < HEIGHT; y++) {
         for (int x = 0; x < WIDTH; x++) {
             printf("%c", grid[y][x].symbol);
@@ -35,14 +36,14 @@ void printGrid(Cell grid[HEIGHT][WIDTH]) {
     }
 }
 
-Cell updateCell(Cell cell, int y, int x) {
+Cell updateCell(Cell cell, int y, int x, Cell tempGrid[HEIGHT][WIDTH]) {
     int countCellsAlive = 0;
     for (int i = -1; i <= 1; i++) {
         for (int j = -1; j <= 1; j++) {
             if (i == 0 && j == 0) continue;
             int ny = y + i;
             int nx = x + j;
-            if (ny >= 0 && ny < HEIGHT && nx >= 0 && nx < WIDTH && grid[ny][nx].state == ALIVE) {
+            if (ny >= 0 && ny < HEIGHT && nx >= 0 && nx < WIDTH && tempGrid[ny][nx].state == ALIVE) {
                 countCellsAlive++;
             }
         }
@@ -60,9 +61,15 @@ Cell updateCell(Cell cell, int y, int x) {
 
 
 void updateGrid(Cell grid[HEIGHT][WIDTH]) {
+    Cell tempGrid[HEIGHT][WIDTH];
     for (int y = 0; y < HEIGHT; y++) {
         for (int x = 0; x < WIDTH; x++) {
-            grid[y][x] = updateCell(grid[y][x], x, y);
+            tempGrid[y][x] = grid[y][x];
+        }
+    }
+    for (int y = 0; y < HEIGHT; y++) {
+        for (int x = 0; x < WIDTH; x++) {
+            grid[y][x] = updateCell(grid[y][x], y, x, tempGrid);
         }
     }
 }
@@ -71,33 +78,22 @@ int main() {
 
     initGrid(grid);
 
-    grid[1][2].state = ALIVE; grid[1][2].symbol = '$';
-    grid[2][3].state = ALIVE; grid[2][3].symbol = '$';
-    grid[3][1].state = ALIVE; grid[3][1].symbol = '$';
-    grid[3][2].state = ALIVE; grid[3][2].symbol = '$';
-    grid[3][3].state = ALIVE; grid[3][3].symbol = '$';
-
-    grid[10][10].state = ALIVE; grid[10][10].symbol = '$';
-    grid[10][11].state = ALIVE; grid[10][11].symbol = '$';
-    grid[11][10].state = ALIVE; grid[11][10].symbol = '$';
-    grid[11][11].state = ALIVE; grid[11][11].symbol = '$';
-
-    for (int i = 0; i < HEIGHT; i++) {
-        for (int j = 0; j < WIDTH; j++) {
-            if (rand() % 5 == 0) {
-                grid[i][j].state = ALIVE;
-                grid[i][j].symbol = '$';
-            }
-        }
-    }
-
+    grid[1][2].state = ALIVE;
+    grid[1][2].symbol = '$';
+    grid[2][3].state = ALIVE;
+    grid[2][3].symbol = '$';
+    grid[3][1].state = ALIVE;
+    grid[3][1].symbol = '$';
+    grid[3][2].state = ALIVE;
+    grid[3][2].symbol = '$';
+    grid[3][3].state = ALIVE;
+    grid[3][3].symbol = '$';
 
     while (1) {
-        printf("==================================================");
         printGrid(grid);
         updateGrid(grid);
 
-        sleep(1);
+        usleep(300000);
     }
 
     return 0;
