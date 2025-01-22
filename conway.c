@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <time.h>
 
 #define WIDTH 50
 #define HEIGHT 20
@@ -77,7 +78,7 @@ void updateGrid(Cell grid[HEIGHT][WIDTH]) {
 int main() {
 
     initGrid(grid);
-
+    // Create a glider
     grid[1][2].state = ALIVE;
     grid[1][2].symbol = '$';
     grid[2][3].state = ALIVE;
@@ -89,11 +90,58 @@ int main() {
     grid[3][3].state = ALIVE;
     grid[3][3].symbol = '$';
 
+    // Create a small exploder
+    grid[10][10].state = ALIVE;
+    grid[10][10].symbol = '$';
+    grid[10][11].state = ALIVE;
+    grid[10][11].symbol = '$';
+    grid[10][12].state = ALIVE;
+    grid[10][12].symbol = '$';
+    grid[11][10].state = ALIVE;
+    grid[11][10].symbol = '$';
+    grid[11][12].state = ALIVE;
+    grid[11][12].symbol = '$';
+    grid[12][11].state = ALIVE;
+    grid[12][11].symbol = '$';
+
+    // Create a blinker
+    grid[15][15].state = ALIVE;
+    grid[15][15].symbol = '$';
+    grid[15][16].state = ALIVE;
+    grid[15][16].symbol = '$';
+    grid[15][17].state = ALIVE;
+    grid[15][17].symbol = '$';
+
+    // Create a toad
+    grid[20][20].state = ALIVE;
+    grid[20][20].symbol = '$';
+    grid[20][21].state = ALIVE;
+    grid[20][21].symbol = '$';
+    grid[20][22].state = ALIVE;
+    grid[20][22].symbol = '$';
+    grid[21][21].state = ALIVE;
+    grid[21][21].symbol = '$';
+    grid[21][22].state = ALIVE;
+    grid[21][22].symbol = '$';
+    grid[21][23].state = ALIVE;
+    grid[21][23].symbol = '$';
+
+    // Randomly fill the grid with alive cells
+    srand(time(NULL));
+    for (int y = 0; y < HEIGHT; y++) {
+        for (int x = 0; x < WIDTH; x++) {
+            if (rand() % 2 == 0) {
+                grid[y][x].state = ALIVE;
+                grid[y][x].symbol = '$';
+            }
+        }
+    }
+
     while (1) {
         printGrid(grid);
         updateGrid(grid);
 
-        usleep(300000);
+        usleep(200000);
     }
 
     return 0;
