@@ -17,4 +17,4 @@ This project implements Conway's Game of Life, a simulation based on cells that 
 
 ## Usage
 
-A 50x20 grid is displayed and updated automatically. Press `Ctrl+C` to stop the simulation.
+A 75x55 grid is displayed and updated automatically. Press `Ctrl+C` to stop the simulation.
