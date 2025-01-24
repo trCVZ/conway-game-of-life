@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define WIDTH 50
-#define HEIGHT 20
+#define DEFAULT_WIDTH 50
+#define DEFAULT_HEIGHT 50
 
 typedef enum {
     DEAD,
@@ -16,35 +16,33 @@ typedef struct {
     CellState state;
 } Cell;
 
-Cell grid[HEIGHT][WIDTH];
-
-void initGrid(Cell grid[HEIGHT][WIDTH]) {
-    for (int y = 0; y < HEIGHT; y++) {
-        for (int x = 0; x < WIDTH; x++) {
+void initGrid(Cell** grid, int height, int width) {
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
             grid[y][x].symbol = '-';
             grid[y][x].state = DEAD;
         }
     }
 }
 
-void printGrid(Cell grid[HEIGHT][WIDTH]) {
+void printGrid(Cell** grid, int height, int width) {
     printf("\033[H\033[J");
-    for (int y = 0; y < HEIGHT; y++) {
-        for (int x = 0; x < WIDTH; x++) {
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
             printf("%c", grid[y][x].symbol);
         }
         printf("\n");
     }
 }
 
-Cell updateCell(Cell cell, int y, int x, Cell tempGrid[HEIGHT][WIDTH]) {
+Cell updateCell(Cell cell, int y, int x, Cell** tempGrid, int height, int width) {
     int countCellsAlive = 0;
     for (int i = -1; i <= 1; i++) {
         for (int j = -1; j <= 1; j++) {
             if (i == 0 && j == 0) continue;
             int ny = y + i;
             int nx = x + j;
-            if (ny >= 0 && ny < HEIGHT && nx >= 0 && nx < WIDTH && tempGrid[ny][nx].state == ALIVE) {
+            if (ny >= 0 && ny < height && nx >= 0 && nx < width && tempGrid[ny][nx].state == ALIVE) {
                 countCellsAlive++;
             }
         }
@@ -61,75 +59,69 @@ Cell updateCell(Cell cell, int y, int x, Cell tempGrid[HEIGHT][WIDTH]) {
 }
 
 
-void updateGrid(Cell grid[HEIGHT][WIDTH]) {
-    Cell tempGrid[HEIGHT][WIDTH];
-    for (int y = 0; y < HEIGHT; y++) {
-        for (int x = 0; x < WIDTH; x++) {
+void updateGrid(Cell** grid, int height, int width) {
+    Cell** tempGrid = malloc(height * sizeof(Cell*));
+    for (int i = 0; i < height; i++) {
+        tempGrid[i] = malloc(width * sizeof(Cell));
+    }
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
             tempGrid[y][x] = grid[y][x];
         }
     }
-    for (int y = 0; y < HEIGHT; y++) {
-        for (int x = 0; x < WIDTH; x++) {
-            grid[y][x] = updateCell(grid[y][x], y, x, tempGrid);
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            grid[y][x] = updateCell(grid[y][x], y, x, tempGrid, height, width);
         }
     }
+    for (int i = 0; i < height; i++) {
+        free(tempGrid[i]);
+    }
+    free(tempGrid);
 }
 
 int main() {
+    char input[10];
+    int width;
+    int height;
 
-    initGrid(grid);
-    // Create a glider
-    grid[1][2].state = ALIVE;
-    grid[1][2].symbol = '$';
-    grid[2][3].state = ALIVE;
-    grid[2][3].symbol = '$';
-    grid[3][1].state = ALIVE;
-    grid[3][1].symbol = '$';
-    grid[3][2].state = ALIVE;
-    grid[3][2].symbol = '$';
-    grid[3][3].state = ALIVE;
-    grid[3][3].symbol = '$';
+    printf("Default WIDTH : %d", DEFAULT_WIDTH);
+    printf("Chose the width of the grid (between 5 and 75) : ");
 
-    // Create a small exploder
-    grid[10][10].state = ALIVE;
-    grid[10][10].symbol = '$';
-    grid[10][11].state = ALIVE;
-    grid[10][11].symbol = '$';
-    grid[10][12].state = ALIVE;
-    grid[10][12].symbol = '$';
-    grid[11][10].state = ALIVE;
-    grid[11][10].symbol = '$';
-    grid[11][12].state = ALIVE;
-    grid[11][12].symbol = '$';
-    grid[12][11].state = ALIVE;
-    grid[12][11].symbol = '$';
+    if (fgets(input, sizeof(input), stdin) != NULL) {
+        width = atoi(input);
+        if (width >= 5 && width <= 75) {
+            printf("Width is set to %d.\n", width);
+        }
+        else {
+            width = 50;
+            printf("Width is set to default value : %d.\n", width);
+        }
+    }
 
-    // Create a blinker
-    grid[15][15].state = ALIVE;
-    grid[15][15].symbol = '$';
-    grid[15][16].state = ALIVE;
-    grid[15][16].symbol = '$';
-    grid[15][17].state = ALIVE;
-    grid[15][17].symbol = '$';
+    printf("Default HEIGHT : %d", DEFAULT_HEIGHT);
+    printf("Chose the height of the grid (between 5 and 55) : ");
 
-    // Create a toad
-    grid[20][20].state = ALIVE;
-    grid[20][20].symbol = '$';
-    grid[20][21].state = ALIVE;
-    grid[20][21].symbol = '$';
-    grid[20][22].state = ALIVE;
-    grid[20][22].symbol = '$';
-    grid[21][21].state = ALIVE;
-    grid[21][21].symbol = '$';
-    grid[21][22].state = ALIVE;
-    grid[21][22].symbol = '$';
-    grid[21][23].state = ALIVE;
-    grid[21][23].symbol = '$';
+    if (fgets(input, sizeof(input), stdin) != NULL) {
+        height = atoi(input);
+        if (height >= 5 && height <= 55) {
+            printf("height is set to %d.\n", height);
+        }
+        else {
+            height = 50;
+            printf("height is set to default value : %d.\n", height);
+        }
+    }
 
-    // Randomly fill the grid with alive cells
+    Cell** grid = malloc(height * sizeof(Cell*));
+    for (int i = 0; i < height; i++) {
+        grid[i] = malloc(width * sizeof(Cell));
+    }
+    initGrid(grid, height, width);
+
     srand(time(NULL));
-    for (int y = 0; y < HEIGHT; y++) {
-        for (int x = 0; x < WIDTH; x++) {
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
             if (rand() % 2 == 0) {
                 grid[y][x].state = ALIVE;
                 grid[y][x].symbol = '$';
@@ -138,11 +130,15 @@ int main() {
     }
 
     while (1) {
-        printGrid(grid);
-        updateGrid(grid);
-
+        printGrid(grid, height, width);
+        updateGrid(grid, height, width);
         usleep(200000);
     }
+
+    for (int i = 0; i < height; i++) {
+        free(grid[i]);
+    }
+    free(grid);
 
     return 0;
 }
