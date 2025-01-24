@@ -2,19 +2,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <time.h>
-
-#define DEFAULT_WIDTH 50
-#define DEFAULT_HEIGHT 50
-
-typedef enum {
-    DEAD,
-    ALIVE
-} CellState;
-
-typedef struct {
-    char symbol;
-    CellState state;
-} Cell;
+#include "conway.h"
 
 void initGrid(Cell** grid, int height, int width) {
     for (int y = 0; y < height; y++) {
@@ -85,7 +73,7 @@ int main() {
     int width;
     int height;
 
-    printf("Default WIDTH : %d", DEFAULT_WIDTH);
+    printf("Default WIDTH : %d\n", DEFAULT_WIDTH);
     printf("Chose the width of the grid (between 5 and 75) : ");
 
     if (fgets(input, sizeof(input), stdin) != NULL) {
@@ -99,7 +87,7 @@ int main() {
         }
     }
 
-    printf("Default HEIGHT : %d", DEFAULT_HEIGHT);
+    printf("Default HEIGHT : %d\n", DEFAULT_HEIGHT);
     printf("Chose the height of the grid (between 5 and 55) : ");
 
     if (fgets(input, sizeof(input), stdin) != NULL) {
