@@ -41,7 +41,7 @@ Cell updateCell(Cell cell, int y, int x, Cell** tempGrid, int height, int width)
     }
     else if (cell.state == DEAD && countCellsAlive == 3) {
         cell.state = ALIVE;
-        cell.symbol = '$';
+        cell.symbol = 'O';
     }
     return cell;
 }
@@ -112,7 +112,7 @@ int main() {
         for (int x = 0; x < width; x++) {
             if (rand() % 2 == 0) {
                 grid[y][x].state = ALIVE;
-                grid[y][x].symbol = '$';
+                grid[y][x].symbol = 'O';
             }
         }
     }
