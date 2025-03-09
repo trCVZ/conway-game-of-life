@@ -6,13 +6,9 @@ This project implements Conway's Game of Life, a simulation based on cells that 
 
 ## Installation
 
-1. Compile the program with the command:
+1. Build and run the program using the provided `build.bat` script:
     ```bash
-    gcc .\conway.c
-    ```
-2. Run the program:
-    ```bash
-    .\a.exe
+    build.bat
     ```
 
 ## Usage
